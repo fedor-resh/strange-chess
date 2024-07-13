@@ -1,0 +1,29 @@
+.board{
+  display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+  place-content: center;
+}
+
+.game{
+  width: 100vw;
+  display: grid;
+  place-content: center;
+}
+
+.circle{
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: grid;
+  place-content: center;
+  position: absolute;
+}
+
+.circle.beaten{
+  background-color: #f2f2f2;
+}
+
+.circle.canMove{
+  background-color: #000;
+}
