@@ -59,10 +59,10 @@ export class Pawn extends Chessman {
     }
 
     getBeatenCells() {
-        // return [
-        //     this.currentCell.getMoved(1, 1),
-        //     this.currentCell.getMoved(-1, 1),
-        // ];
+        return [
+           this.currentCell.getMoved(1, 1),
+           this.currentCell.getMoved(-1, 1),
+        ];
         return this.getBeatenStraight(DIRECTIONS.UP, true, 1);
     }
 
