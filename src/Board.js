@@ -39,7 +39,6 @@ export class Board {
         } else if (this.clickedCell.chessman.getMoveCells().includes(cell) && !cell.chessman) {
             this.clickedCell.chessman.moveTo(cell)
         }
-        this.clearBeaten();
         this.clickedCell = null
     }
 

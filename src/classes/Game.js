@@ -33,5 +33,6 @@ export class Game {
             this.currentColor = this.currentColor === COLOR.WHITE ? COLOR.BLACK : COLOR.WHITE
             cell.chessman.isFirstMove = false
         }
+        this.board.clearBeaten()
     }
 }
