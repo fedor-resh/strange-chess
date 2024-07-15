@@ -27,3 +27,26 @@
 .circle.canMove{
   background-color: #000;
 }
+
+.cell{
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 80px;
+  user-select: none;
+  transition: text-shadow 0.3s;
+}
+.cell.selectedColor{
+  cursor: pointer;
+  text-shadow: 0 0 10px #888;
+}
+.cell.beaten{
+  text-shadow: 0 0 10px red;
+}
+
+.cell.canMove{
+  background-color: #000;
+}
+

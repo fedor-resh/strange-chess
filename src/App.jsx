@@ -1,13 +1,7 @@
 import {Fragment, useEffect, useState} from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
-import {create} from "zustand";
-import {app} from "./firebaseInit.js";
-import {writeData} from "./firebase.js";
-import {Game} from "./Game.js";
-import {Pawn} from "./Chessmen.js";
-import {Cell} from "./Cell.js";
+import {Game} from "./classes/Game.js";
+import {Pawn} from "./classes/Chessmen.js";
 import classNames from "classnames";
 
 const colors = {
@@ -19,41 +13,60 @@ const colors = {
 
 
 function App() {
-    const [game, setGame] = useState(new Game().copyGame());
+    const [game, setGame] = useState(new Game());
+    const {board} = game;
     const render = () => {
         setGame(game.copyGame());
+        console.log(game.board)
     }
     useEffect(() => {
-        game.board[1][4].setChessman(Pawn, colors.white);
-        game.board[5][5].setChessman(Pawn, colors.black);
+        board.initBoard();
         render();
     }, []);
 
     return (
         <div className='game'>
             <div className='board'>
-                {game.board.map((row, i) => <Fragment key={i}>
+                {board.matrix.map((row, i) => <Fragment key={i}>
                         {row.map((cell, j) => <div
                             key={j}
                             style={{
-                                width: 100,
-                                height: 100,
-                                backgroundColor: (i + j) % 2 ? colors.darkGray : colors.lightGray,
+                                backgroundColor: (cell.x + cell.y) % 2 ? colors.darkGray : colors.lightGray,
                                 color: cell.chessman?.color,
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                fontSize: 80,
-                                cursor: cell.chessman ? 'pointer' : 'default',
                             }}
-                            onClick={() => {
-                                game.board[i][j].click();
+
+                            className={classNames('cell', {
+                                selectedColor: cell.chessman && cell.chessman.color === game.currentColor,
+                                beaten: cell.beaten && cell.chessman && cell.chessman.color !== game.currentColor,
+                                canMove: cell.canMove
+                            })}
+
+                            draggable={cell.chessman && cell.chessman.color === game.currentColor}
+
+                            onDragStart={(e) => {
+                                e.target.style.visibility = 'hidden';
+                                game.raiseChessmen(cell);
                                 render();
                             }}
+
+                            onDragEnd={(e) => {
+                                e.target.style.visibility = 'visible';
+                            }}
+
+                            onDrop={(e) => {
+                                game.putChessman(cell);
+                                render();
+                            }}
+                            onDragOver={(e) => {
+                                e.preventDefault();
+                            }}
                         >
-                            <div>{cell.chessman?.icon}</div>
-                            <div className={classNames({
-                                circle: true,
+                            <div
+                                style={{
+                                    visibility: 'visible'
+                                }}
+                            >{cell.chessman?.icon}</div>
+                            <div className={classNames('circle', {
                                 beaten: cell.beaten,
                                 canMove: cell.canMove
                             })}></div>

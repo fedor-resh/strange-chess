@@ -19,3 +19,8 @@ export const D = {
     [DIRECTIONS.DOWN_LEFT]: [-1, -1],
     [DIRECTIONS.DOWN_RIGHT]: [1, -1],
 }
+
+export const COLOR = {
+    WHITE: 'white',
+    BLACK: 'black',
+}
