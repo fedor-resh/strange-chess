@@ -1,5 +1,4 @@
-import {COLOR, D, DIRECTIONS} from "../consts.js";
-
+import { COLOR, D, DIRECTIONS } from "../consts.js";
 const ChessmenIcons = {
     Pawn: '♟',
     Rook: '♜',
@@ -7,8 +6,7 @@ const ChessmenIcons = {
     Bishop: '♝',
     Queen: '♛',
     King: '♚'
-}
-
+};
 class Chessman {
     constructor(color, currentCell) {
         this.color = color;
@@ -21,78 +19,66 @@ class Chessman {
     }
 
     getMoveCells() {
-        this.getBeatenCells().filter(cell => !cell.chessman);
+        return this.getBeatenCells().filter(cell => cell && !cell.chessman);
     }
 
     moveTo(cell) {
-        this.currentCell.setChessman(null);
+        if (this.currentCell) {
+            this.currentCell.setChessman(null);
+        }
         this.currentCell = cell;
         cell.chessman = this;
     }
 
     getBeatenStraight(direction, ignoreChessman = false, distance = 7) {
         const [dx, dy] = D[direction];
-
         const cells = [];
-        for (let i = 1; i < distance+1; i++) {
+
+        for (let i = 1; i <= distance; i++) {
             const cell = this.currentCell.getMoved(dx * i, dy * i);
-            console.log(this)
-            if(cell?.chessman?.color !== this.color) {
+            if (!cell) break;
+            if (cell.chessman) {
+                if (cell.chessman.color !== this.color) {
+                    cells.push(cell);
+                }
+                if (!ignoreChessman) break;
+            } else {
                 cells.push(cell);
             }
-            if (!cell || cell.chessman && !ignoreChessman) break
         }
-        return cells.filter(Boolean);
+        return cells;
     }
 }
 
 export class Pawn extends Chessman {
-    constructor(color, currentCell = null) {
+    constructor(color, currentCell) {
         super(color, currentCell);
         this.isFirstMove = true;
     }
 
     getBeatenCells() {
-        if (this.color === COLOR.WHITE){
-            return [
-                this.currentCell.getMoved(1, 1),
-                this.currentCell.getMoved(-1, 1),
-            ];
-        }
+        const direction = this.color === COLOR.WHITE ? 1 : -1;
         return [
-            this.currentCell.getMoved(1, -1),
-            this.currentCell.getMoved(-1, -1),
-        ];
+            this.currentCell.getMoved(1, direction),
+            this.currentCell.getMoved(-1, direction),
+        ].filter(Boolean);
     }
 
     getMoveCells() {
-        if (this.color === COLOR.WHITE){
-            const ans = [
-                this.currentCell.getMoved(0, 1),
-            ];
-
-            if (this.isFirstMove) {
-                ans.push(this.currentCell.getMoved(0, 2));
-            }
-            return ans.filter(Boolean).filter(cell => !cell.chessman);
-        }
-        const ans = [
-            this.currentCell.getMoved(0, -1),
+        const direction = this.color === COLOR.WHITE ? 1 : -1;
+        const cells = [
+            this.currentCell.getMoved(0, direction),
         ];
 
         if (this.isFirstMove) {
-            ans.push(this.currentCell.getMoved(0, -2));
+            cells.push(this.currentCell.getMoved(0, 2 * direction));
         }
 
-        return ans.filter(Boolean).filter(cell => !cell.chessman);
+        return cells.filter(Boolean).filter(cell => !cell.chessman);
     }
 }
 
 export class Rook extends Chessman {
-    constructor(color, currentCell = null) {
-        super(color, currentCell);
-    }
-
     getBeatenCells() {
         return [
             ...this.getBeatenStraight(DIRECTIONS.UP),
@@ -104,10 +90,6 @@ export class Rook extends Chessman {
 }
 
 export class Knight extends Chessman {
-    constructor(color, currentCell = null) {
-        super(color, currentCell);
-    }
-
     getBeatenCells() {
         return [
             this.currentCell.getMoved(1, 2),
@@ -118,15 +100,11 @@ export class Knight extends Chessman {
             this.currentCell.getMoved(-2, 1),
             this.currentCell.getMoved(2, -1),
             this.currentCell.getMoved(-2, -1),
-        ];
+        ].filter(Boolean);
     }
 }
 
 export class Bishop extends Chessman {
-    constructor(color, currentCell = null) {
-        super(color, currentCell);
-    }
-
     getBeatenCells() {
         return [
             ...this.getBeatenStraight(DIRECTIONS.UP_LEFT),
@@ -138,10 +116,6 @@ export class Bishop extends Chessman {
 }
 
 export class Queen extends Chessman {
-    constructor(color, currentCell = null) {
-        super(color, currentCell);
-    }
-
     getBeatenCells() {
         return [
             ...this.getBeatenStraight(DIRECTIONS.UP),
@@ -157,10 +131,6 @@ export class Queen extends Chessman {
 }
 
 export class King extends Chessman {
-    constructor(color, currentCell = null) {
-        super(color, currentCell);
-    }
-
     getBeatenCells() {
         return [
             ...this.getBeatenStraight(DIRECTIONS.UP, true, 1),
@@ -174,8 +144,5 @@ export class King extends Chessman {
         ];
     }
 }
-
-
-
 
 
