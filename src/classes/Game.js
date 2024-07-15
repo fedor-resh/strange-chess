@@ -28,7 +28,7 @@ export class Game {
     }
 
     putChessman(cell) {
-        if (this.board.clickedCell && (cell.canMove || cell.beaten)) {
+        if (this.board.clickedCell && (cell.canMove || cell.beaten && cell.chessman)) {
             this.board.putChessman(cell)
             this.currentColor = this.currentColor === COLOR.WHITE ? COLOR.BLACK : COLOR.WHITE
             cell.chessman.isFirstMove = false
