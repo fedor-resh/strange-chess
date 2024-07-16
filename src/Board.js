@@ -8,7 +8,7 @@ export class Board {
             .fill(null)
             .map((_, i) => Array(8).fill(null)
                 .map((_, j) => new Cell(7-j, i, this)));
-        this.clickedCell = null;
+        this.focusedCell = null;
     }
 
     cell(x, y) {
@@ -20,26 +20,33 @@ export class Board {
         this.matrix.forEach(row => row.forEach(cell => cell.canMove = false));
     }
 
+    setBeaten(cell) {
+        cell.chessman.getBeatenCells().forEach(cell => cell && (cell.beaten = true));
+        cell.chessman.getMoveCells().forEach(cell => cell && (cell.canMove = true));
+    }
+
     getMoved(cell, dx, dy) {
         if (cell.x + dx < 0 || cell.x + dx > 7 || cell.y - dy < 0 || cell.y - dy > 7) return null;
         return this.matrix[cell.y - dy][7 - (cell.x + dx)];
     }
 
     raiseChessmen(cell) {
-        if(!cell.chessman) return
         this.clearBeaten();
-        cell.chessman.getBeatenCells().forEach(cell => cell && (cell.beaten = true));
-        cell.chessman.getMoveCells().forEach(cell => cell && (cell.canMove = true));
-        this.clickedCell = cell
+        if(cell.isFromStock) {
+            const kingCell = this.matrix.flat().find(c => c.chessman instanceof King && c.chessman.color === cell.chessman.color)
+            this.setBeaten(kingCell)
+        }
+        this.setBeaten(cell)
+        this.focusedCell = cell
     }
 
     putChessman(cell) {
-        if (this.clickedCell.chessman.getBeatenCells().includes(cell) && cell.chessman) {
-            this.clickedCell.chessman.moveTo(cell)
-        } else if (this.clickedCell.chessman.getMoveCells().includes(cell) && !cell.chessman) {
-            this.clickedCell.chessman.moveTo(cell)
+        if (cell.beaten && cell.chessman) {
+            this.focusedCell.chessman.moveTo(cell)
+        } else if (cell.canMove && !cell.chessman) {
+            this.focusedCell.chessman.moveTo(cell)
         }
-        this.clickedCell = null
+        this.focusedCell = null
     }
 
     initBoard() {

@@ -7,6 +7,10 @@ export class Game {
     constructor() {
         this.board = new Board();
 
+        this.players = {
+            [COLOR.WHITE]: new Player(COLOR.WHITE),
+            [COLOR.BLACK]: new Player(COLOR.BLACK)
+        }
         this.currentColor = COLOR.WHITE;
         this.yourColor = COLOR.WHITE
     }
@@ -28,11 +32,12 @@ export class Game {
     }
 
     putChessman(cell) {
-        if (this.board.clickedCell && (cell.canMove || cell.beaten && cell.chessman)) {
+        if (this.board.focusedCell && (cell.canMove || cell.beaten && cell.chessman)) {
             this.board.putChessman(cell)
             this.currentColor = this.currentColor === COLOR.WHITE ? COLOR.BLACK : COLOR.WHITE
             cell.chessman.isFirstMove = false
         }
         this.board.clearBeaten()
+        this.board.focusedCell = null
     }
 }

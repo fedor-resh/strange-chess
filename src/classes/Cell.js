@@ -8,7 +8,8 @@ export class Cell {
         this.chessman = null;
         this.beaten = false;
         this.canMove = false;
-        this.getMoved = board.getMoved.bind(board, this);
+        this.getMoved = board?.getMoved?.bind(board, this) || (() => null);
+        this.isFromStock = false;
     }
 
 

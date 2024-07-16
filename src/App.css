@@ -1,52 +1,86 @@
-.board{
-  display: grid;
+.board {
+    display: grid;
     grid-template-columns: repeat(8, 1fr);
     grid-template-rows: repeat(8, 1fr);
-  place-content: center;
+    place-content: center;
 }
 
-.game{
-  width: 100vw;
-  display: grid;
-  place-content: center;
+.game {
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
 }
 
-.circle{
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  display: grid;
-  place-content: center;
-  position: absolute;
+.circle {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: grid;
+    place-content: center;
+    position: absolute;
 }
 
-.circle.beaten{
-  background-color: #630000;
+.circle.beaten {
+    background-color: #630000;
 }
 
-.circle.canMove{
-  background-color: #000;
+.circle.canMove {
+    background-color: #000;
 }
 
-.cell{
-  width: 100px;
-  height: 100px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 80px;
-  user-select: none;
-  transition: text-shadow 0.3s;
-}
-.cell.selectedColor{
-  cursor: pointer;
-  text-shadow: 0 0 10px #888;
-}
-.cell.beaten{
-  text-shadow: 0 0 10px red;
+.cell {
+    width: 100px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 80px;
+    user-select: none;
+    transition: text-shadow 0.3s;
 }
 
-.cell.canMove{
-  background-color: #000;
+.cell.selectedColor {
+    cursor: pointer;
+    text-shadow: 0 0 10px #888;
 }
+
+.cell.beaten {
+    text-shadow: 0 0 10px red;
+}
+
+.cell.canMove {
+    background-color: #000;
+}
+
+.chessman_card {
+    pointer-events: none;
+    opacity: 0;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #000;
+    left: 50px;
+    top: 50px;
+    transition: all 0.3s;
+    & img {
+        width: 300px;
+        border-radius: 10px;
+    }
+    & h1 {
+        font-size: 20px;
+        font-weight: 500;
+        color: black;
+    }
+    &.show {
+        opacity: 1;
+    }
+}
+
+
 
