@@ -27,7 +27,7 @@ class Chessman {
         this.type = this.constructor.name;
         this.icon = ChessmenIcons[this.type];
         this.price = ChessmenPrices[this.type];
-        this.img = `../public/${this.type}.webp`;
+        this.img = `/${this.type}.webp`;
         this.currentCell = currentCell;
     }
 
