@@ -5,12 +5,14 @@ const colors = {
     darkGray: '#717171',
     lightGray: '#bbbbbb'
 }
-export function Cell({game, cell, render}) {
+export function Cell({game, cell, render, withPrice}) {
+    const notDisabled = (!cell.isFromStock || game.players[game.currentColor].coins >= cell.chessman?.price);
+
     return <div className='hover_detector'>
         <div
             style={{
                 backgroundColor: (cell.x + cell.y) % 2 ? colors.darkGray : colors.lightGray,
-                color: cell.chessman?.color,
+                color: notDisabled? cell.chessman?.color : colors.darkGray
             }}
 
             className={classNames('cell', {
@@ -19,7 +21,7 @@ export function Cell({game, cell, render}) {
                 canMove: cell.canMove
             })}
 
-            draggable={cell.chessman && cell.chessman.color === game.currentColor}
+            draggable={cell.chessman && cell.chessman.color === game.currentColor && notDisabled}
 
             onDragStart={(e) => {
                 e.target.style.visibility = 'hidden';
@@ -31,7 +33,7 @@ export function Cell({game, cell, render}) {
                 e.target.style.visibility = 'visible';
             }}
 
-            onDrop={(e) => {
+            onDrop={() => {
                 game.putChessman(cell);
                 render();
             }}
@@ -46,6 +48,7 @@ export function Cell({game, cell, render}) {
                 beaten: cell.beaten && !cell.chessman,
                 canMove: cell.canMove
             })}></div>
+            {withPrice && cell.chessman && <div className='price'><p>{cell.chessman?.price}</p></div>}
         </div>
     </div>
 }

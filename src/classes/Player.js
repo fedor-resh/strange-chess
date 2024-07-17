@@ -7,6 +7,7 @@ export class Player {
     constructor(color) {
         this.color = color;
         this.stock = [];
+        this.coins = 0;
         this.initStock();
     }
 
@@ -15,7 +16,7 @@ export class Player {
             this.stock.push(new Cell(0, 0, null));
         }
 
-        this.stock.forEach((cell, i) => {
+        this.stock.forEach((cell) => {
             cell.setChessman(allChessmen[randomInt(0, allChessmen.length - 1)], this.color);
             cell.isFromStock = true;
         })

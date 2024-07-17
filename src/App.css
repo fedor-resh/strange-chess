@@ -6,11 +6,22 @@
 }
 
 .game {
-    width: 100vw;
+    max-width: 1050px;
+    margin: 0 auto;
+
+    & .game_data {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+}
+
+.total_board{
+    margin: 0 auto;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 20px;
+    justify-content: space-between;
 }
 
 .circle {
@@ -31,6 +42,7 @@
 }
 
 .cell {
+    position: relative;
     width: 100px;
     height: 100px;
     display: flex;
@@ -60,26 +72,44 @@
     position: absolute;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    /*gap: 10px;*/
     padding: 10px;
-    background-color: #fff;
+    background-color: #333;
     border-radius: 10px;
     box-shadow: 0 0 10px #000;
     left: 50px;
     top: 50px;
     transition: all 0.3s;
+    max-width: 300px;
     & img {
-        width: 300px;
         border-radius: 10px;
     }
     & h1 {
         font-size: 20px;
         font-weight: 500;
-        color: black;
+    }
+    & p {
+        font-size: 16px;
+        color: #ddd;
     }
     &.show {
         opacity: 1;
     }
+}
+
+.price {
+    position: absolute;
+    display: grid;
+    place-content: center;
+    bottom: 20px;
+    right: 20px;
+    width: 25px;
+    height: 25px;
+    text-align: center;
+    font-size: 20px;
+    color: #ddd;
+    background-color: black;
+    border-radius: 100px;
 }
 
 

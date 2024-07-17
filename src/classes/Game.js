@@ -1,4 +1,3 @@
-import {Cell} from "./Cell.js";
 import {Board} from "../Board.js";
 import {COLOR} from "../consts.js";
 import {Player} from "./Player.js";
@@ -26,7 +25,8 @@ export class Game {
     }
 
     raiseChessmen(cell) {
-        if (cell.chessman && cell.chessman.color === this.currentColor) {
+        if (cell.chessman && cell.chessman.color === this.currentColor
+            && (!cell.isFromStock || this.players[this.currentColor].coins >= cell.chessman?.price)) {
             this.board.raiseChessmen(cell)
         }
     }
@@ -36,6 +36,10 @@ export class Game {
             this.board.putChessman(cell)
             this.currentColor = this.currentColor === COLOR.WHITE ? COLOR.BLACK : COLOR.WHITE
             cell.chessman.isFirstMove = false
+            if (this.board.focusedCell?.isFromStock) {
+                this.players[this.currentColor].coins -= this.board.focusedCell.price
+            }
+            this.players[this.currentColor].coins++
         }
         this.board.clearBeaten()
         this.board.focusedCell = null
