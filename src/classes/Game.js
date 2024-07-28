@@ -48,7 +48,9 @@ export class Game {
             this.board.putChessman(cell)
             this.players[this.currentColor].coins++
             this.changeColor()
-            cell.chessman.isFirstMove = false
+            if(cell.chessman){
+                cell.chessman.isFirstMove = false
+            }
             this.addToHistory({
                 from: fromCell,
                 to: cell
