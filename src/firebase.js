@@ -1,14 +1,28 @@
 import {app} from "./firebaseInit.js";
-import { getDatabase, ref, set, get } from "firebase/database";
+import { getDatabase, ref, set, get, onValue } from "firebase/database";
 
-export async function writeData(path, data) {
-    const db = getDatabase(app);
-    await set(ref(db, path), data);
+class Firebase {
+    constructor() {
+        this.db = getDatabase(app);
+    }
+
+    async connect(id) {
+        this.roomId = id;
+    }
+    async set(path, data) {
+        await set(ref(this.db, this.roomId + '/' + path), data);
+    }
+
+    async read(path) {
+        const snapshot = await get(ref(this.db, this.roomId + '/' + path));
+        return snapshot.val();
+    }
+
+    async listen(path, callback) {
+        return onValue(ref(this.db, this.roomId + '/' + path), (snapshot) => {
+            callback(snapshot.val());
+        })
+    }
 }
 
-export async function readData(path) {
-    const db = getDatabase(app);
-    const snapshot = await get(ref(db, path));
-    return snapshot.val();
-}
-
+export const firebase = new Firebase();

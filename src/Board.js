@@ -50,6 +50,7 @@ export class Board {
     }
 
     initBoard() {
+        this.matrix.forEach(row => row.forEach(cell => cell.setChessman(null)));
         this.matrix.forEach((row, i) => row.forEach((cell, j) => {
             if (i < 2) {
                 cell.setChessman(Pawn, COLOR.BLACK)

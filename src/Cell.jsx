@@ -1,15 +1,19 @@
 import classNames from "classnames";
+import {firebase} from "./firebase.js";
+import {moveToObj} from "./classes/utils.js";
 const colors = {
     black: 'black',
     white: 'white',
     darkGray: '#717171',
     lightGray: '#bbbbbb'
 }
+
 export function Cell({game, cell, render, withPrice}) {
     const notDisabled = (!cell.isFromStock || game.players[game.currentColor].coins >= cell.chessman?.price);
 
     return <div className='hover_detector'>
         <div
+            onClick={() => console.log({cell})}
             style={{
                 backgroundColor: (cell.x + cell.y) % 2 ? colors.darkGray : colors.lightGray,
                 color: notDisabled? cell.chessman?.color : colors.darkGray
@@ -35,6 +39,7 @@ export function Cell({game, cell, render, withPrice}) {
 
             onDrop={() => {
                 game.putChessman(cell);
+                firebase.set('history', game.history)
                 render();
             }}
             onDragOver={(e) => e.preventDefault()}

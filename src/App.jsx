@@ -4,9 +4,12 @@ import {Game} from "./classes/Game.js";
 import {Cell} from "./Cell.jsx";
 import {COLOR} from "./consts.js";
 import {ChessmanCard} from "./ChessmanCard.jsx";
+import {firebase} from "./firebase.js";
+import {makeMoveFromObj} from "./classes/utils.js";
 const Cells = ({row, cellProps, withPrice}) => (
     <>{row.map((cell, j) => <Cell {...cellProps(cell)} key={j} withPrice={withPrice}/>)}</>
 )
+
 function App() {
     const [game, setGame] = useState(new Game());
     const {board} = game;
@@ -16,6 +19,21 @@ function App() {
     useEffect(() => {
         board.initBoard();
         render();
+        console.log('move')
+        const urlParams = new URLSearchParams(window.location.search);
+        const roomId = urlParams.get('room');
+        if (roomId) {
+            firebase.connect(roomId)
+        } else {
+            const roomId = Math.random().toString(36).substring(7);
+            firebase.connect(roomId)
+            window.location.search = `?room=${roomId}`
+        }
+        firebase.listen('history', history => {
+            game.history = history || []
+            game.history.forEach(move => makeMoveFromObj(game, move))
+            render()
+        })
     }, []);
 
     const cellProps = useCallback((cell) => ({

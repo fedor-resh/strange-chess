@@ -13,7 +13,7 @@ export class Player {
 
     initStock() {
         for (let i = 0; i < 8; i++) {
-            this.stock.push(new Cell(0, 0, null));
+            this.stock.push(new Cell(-1, i, null));
         }
 
         this.stock.forEach((cell) => {

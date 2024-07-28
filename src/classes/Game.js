@@ -1,6 +1,8 @@
 import {Board} from "../Board.js";
 import {COLOR} from "../consts.js";
 import {Player} from "./Player.js";
+import {firebase} from "../firebase.js";
+import {moveToObj} from "./utils.js";
 
 export class Game {
     constructor() {
@@ -11,7 +13,8 @@ export class Game {
             [COLOR.BLACK]: new Player(COLOR.BLACK)
         }
         this.currentColor = COLOR.WHITE;
-        this.yourColor = COLOR.WHITE
+        this.yourColor = COLOR.WHITE;
+        this.history = [];
     }
 
     copyGame() {
@@ -31,22 +34,38 @@ export class Game {
         }
     }
 
-    putChessman(cell) {
-        if (this.board.focusedCell && (cell.canMove || cell.beaten && cell.chessman)) {
 
-            if (this.board.focusedCell?.isFromStock) {
-                console.log(this.board.focusedCell)
-                this.players[this.currentColor].coins -= this.board.focusedCell.chessman.price
+    putChessman(cell) {
+        const fromCell = this.board.focusedCell;
+        if(!fromCell) return
+        const canMove = cell.canMove;
+        const canBeat = cell.beaten && cell.chessman?.color !== this.currentColor
+        if (canMove || canBeat) {
+            if (fromCell?.isFromStock) {
+                this.players[this.currentColor].coins -= fromCell.chessman.price
+                fromCell.isFromStock = false
             }
             this.board.putChessman(cell)
             this.players[this.currentColor].coins++
-
-            this.currentColor = this.currentColor === COLOR.WHITE ? COLOR.BLACK : COLOR.WHITE
+            this.changeColor()
             cell.chessman.isFirstMove = false
-            console.log(this.board.focusedCell)
-
+            this.addToHistory({
+                from: fromCell,
+                to: cell
+            })
         }
         this.board.clearBeaten()
         this.board.focusedCell = null
+    }
+
+    changeColor() {
+        this.currentColor = this.currentColor === COLOR.WHITE ? COLOR.BLACK : COLOR.WHITE
+    }
+
+    addToHistory(move) {
+        const obj = moveToObj(move)
+        if(!this.history || JSON.stringify(this.history[this.history.length - 1]) !== JSON.stringify(obj)) {
+            this.history.push(obj)
+        }
     }
 }
