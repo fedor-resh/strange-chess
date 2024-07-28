@@ -33,13 +33,18 @@ export class Game {
 
     putChessman(cell) {
         if (this.board.focusedCell && (cell.canMove || cell.beaten && cell.chessman)) {
+
+            if (this.board.focusedCell?.isFromStock) {
+                console.log(this.board.focusedCell)
+                this.players[this.currentColor].coins -= this.board.focusedCell.chessman.price
+            }
             this.board.putChessman(cell)
+            this.players[this.currentColor].coins++
+
             this.currentColor = this.currentColor === COLOR.WHITE ? COLOR.BLACK : COLOR.WHITE
             cell.chessman.isFirstMove = false
-            if (this.board.focusedCell?.isFromStock) {
-                this.players[this.currentColor].coins -= this.board.focusedCell.price
-            }
-            this.players[this.currentColor].coins++
+            console.log(this.board.focusedCell)
+
         }
         this.board.clearBeaten()
         this.board.focusedCell = null
