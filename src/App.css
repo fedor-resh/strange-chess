@@ -55,7 +55,7 @@
 
 .cell.selectedColor {
     cursor: pointer;
-    text-shadow: 0 0 10px #888;
+    text-shadow: 0 0 10px #434242;
 }
 
 .cell.beaten {

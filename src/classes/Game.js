@@ -5,7 +5,7 @@ import {firebase} from "../firebase.js";
 import {makeMoveFromObj, moveToObj} from "./utils.js";
 
 export class Game {
-    constructor(history = [], hash = '0'.repeat(16)) {
+    constructor(history = [], hash = '0'.repeat(16), yourColor = COLOR.WHITE) {
         this.board = new Board();
         this.board.initBoard();
         this.players = {
@@ -15,9 +15,9 @@ export class Game {
         this.board.matrix[9] = this.players[COLOR.WHITE].stock
         this.board.matrix[10] = this.players[COLOR.BLACK].stock
         this.currentColor = COLOR.WHITE;
-        this.yourColor = COLOR.WHITE;
         this.history = history;
         this.history.forEach(move => makeMoveFromObj(this, move))
+        this.yourColor = yourColor;
     }
 
     copyGame() {
@@ -31,7 +31,7 @@ export class Game {
     }
 
     raiseChessmen(cell) {
-        if (cell.chessman && cell.chessman.color === this.currentColor
+        if (cell.chessman && cell.chessman.color === this.currentColor && (this.currentColor === this.yourColor || !this.yourColor)
             && (!cell.isFromStock || this.players[this.currentColor].coins >= cell.chessman?.price)) {
             this.board.raiseChessmen(cell)
         }

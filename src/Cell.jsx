@@ -14,7 +14,7 @@ export function Cell({game, cell, render, withPrice}) {
     return <div className='hover_detector'>
         <div
             style={{
-                backgroundColor: (cell.x + cell.y) % 2 ? colors.darkGray : colors.lightGray,
+                backgroundColor: !cell.isFromStock && (cell.x + cell.y) % 2 ? colors.darkGray : colors.lightGray,
                 color: notDisabled? cell.chessman?.color : colors.darkGray
             }}
 
@@ -24,7 +24,7 @@ export function Cell({game, cell, render, withPrice}) {
                 canMove: cell.canMove
             })}
 
-            draggable={cell.chessman && cell.chessman.color === game.currentColor && notDisabled}
+            draggable={cell.chessman && cell.chessman.color === game.currentColor && (cell.currentColor === cell.yourColor || !cell.yourColor) && notDisabled}
 
             onDragStart={(e) => {
                 e.target.style.visibility = 'hidden';

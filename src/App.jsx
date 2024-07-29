@@ -6,26 +6,52 @@ import {COLOR} from "./consts.js";
 import {ChessmanCard} from "./ChessmanCard.jsx";
 import {firebase} from "./firebase.js";
 import {makeMoveFromObj} from "./classes/utils.js";
+import {get} from "firebase/database";
+
 const Cells = ({row, cellProps, withPrice}) => (
     <>{row.map((cell, j) => <Cell {...cellProps(cell)} key={j} withPrice={withPrice}/>)}</>
 )
+const audio = new Audio('sound.mp3');
+
+const playSound = () => {
+    audio.play();
+}
 
 const getRandomHash = () => {
     const hash = () => Math.random().toString(36).substring(Math.random().toString(36).length - 8)
     return hash() + hash()
 }
 
-function handleRoomState() {
+const getParam = key => {
     const urlParams = new URLSearchParams(window.location.search);
-    const roomId = urlParams.get('room');
+    return urlParams.get(key);
+}
+
+const setParam = (key, value) => {
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set(key, value);
+    const newUrl = window.location.protocol + '//' + window.location.host + window.location.pathname + '?' + urlParams.toString();
+    window.history.pushState({path: newUrl}, '', newUrl);
+}
+
+function handleRoomState() {
+    let roomId = getParam('room')
+    let color = getParam('color')
     if (roomId) {
         firebase.connect(roomId)
+        color = color ?? COLOR.BLACK
     } else {
-        const roomId = getRandomHash()
+        roomId = getRandomHash()
         firebase.connect(roomId)
-        window.location.search = `?room=${roomId}`
+        setParam('room', roomId)
+        color = color ?? COLOR.WHITE
     }
-    return roomId
+    if (color === 'both') color = false
+    return {roomId, color}
+}
+
+function reverseIfBlack(color, matrix) {
+    return color === COLOR.BLACK ? matrix.toReversed().map(row => row.toReversed()) : matrix
 }
 
 
@@ -36,10 +62,11 @@ function App() {
         setGame(game.copyGame());
     }
     useEffect(() => {
-        const hash = handleRoomState();
-        setGame(new Game([], hash));
+        const {color, roomId: hash} = handleRoomState();
+        setGame(new Game([], hash, color));
         firebase.listen('history', (history) => {
-            setGame(new Game(history || [], hash));
+            setGame(new Game(history || [], hash, color));
+            playSound()
         })
     }, []);
 
@@ -59,15 +86,14 @@ function App() {
                     <Cells row={game.players[COLOR.BLACK].stock} cellProps={cellProps} withPrice/>
                 </div>
                 <div className='board'>
-                    {board.matrix.map((row, i) =>
-                        !row[0].isFromStock && <Fragment key={i}>
+                    {reverseIfBlack(game.yourColor, board.matrix.slice(0, 8)).map((row, i) =>
+                        <Fragment key={i}>
                             <Cells row={row} cellProps={cellProps}/>
                         </Fragment>
                     )}
                 </div>
                 <ChessmanCard chessman={game.board.focusedCell?.chessman}/>
             </div>
-
         </div>
 
     )
