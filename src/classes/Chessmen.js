@@ -74,7 +74,7 @@ export class Pawn extends Chessman {
     }
 
     getBeatenCells() {
-        const direction = this.color === COLOR.WHITE ? 1 : -1;
+        const direction = this.color === COLOR.BLACK ? 1 : -1;
         return [
             this.currentCell.getMoved(1, direction),
             this.currentCell.getMoved(-1, direction),
@@ -82,16 +82,9 @@ export class Pawn extends Chessman {
     }
 
     getMoveCells() {
-        const direction = this.color === COLOR.WHITE ? 1 : -1;
-        const cells = [
-            this.currentCell.getMoved(0, direction),
-        ];
-
-        if (this.isFirstMove) {
-            cells.push(this.currentCell.getMoved(0, 2 * direction));
-        }
-
-        return cells.filter(Boolean).filter(cell => !cell.chessman);
+        const DIR = this.color === COLOR.WHITE ? DIRECTIONS.DOWN : DIRECTIONS.UP;
+        if(!this.isFirstMove) return this.getBeatenStraight(DIR, false, 1)
+        return this.getBeatenStraight(DIR, false, 2);
     }
 }
 

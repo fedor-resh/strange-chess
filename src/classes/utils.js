@@ -13,6 +13,7 @@ export function moveToObj(move) {
 }
 
 export function makeMoveFromObj(game, move) {
-    game.raiseChessmen(game.board.cell(7-move.from.x, 7-move.from.y))
-    game.putChessman(game.board.cell(7-move.to.x, 7-move.to.y))
+    console.log('log', {move})
+    game.raiseChessmen(game.board.cell(move.from.x, move.from.y))
+    game.putChessman(game.board.cell(move.to.x, move.to.y))
 }

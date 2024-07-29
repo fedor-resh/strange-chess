@@ -7,12 +7,12 @@ export class Board {
         this.matrix = Array(8)
             .fill(null)
             .map((_, i) => Array(8).fill(null)
-                .map((_, j) => new Cell(7-j, i, this)));
+                .map((_, j) => new Cell(j, i, this)));
         this.focusedCell = null;
     }
 
     cell(x, y) {
-        return this.matrix[7-y][x];
+        return this.matrix[y][x];
     }
 
     clearBeaten() {
@@ -26,8 +26,8 @@ export class Board {
     }
 
     getMoved(cell, dx, dy) {
-        if (cell.x + dx < 0 || cell.x + dx > 7 || cell.y - dy < 0 || cell.y - dy > 7) return null;
-        return this.matrix[cell.y - dy][7 - (cell.x + dx)];
+        if (cell.x + dx < 0 || cell.x + dx > 7 || cell.y + dy < 0 || cell.y + dy > 7) return null;
+        return this.matrix[cell.y + dy][cell.x + dx];
     }
 
     raiseChessmen(cell) {
@@ -59,25 +59,25 @@ export class Board {
             }
         }));
 
-        this.cell(0, 0).setChessman(Rook, COLOR.WHITE)
-        this.cell(7, 0).setChessman(Rook, COLOR.WHITE)
-        this.cell(0, 7).setChessman(Rook, COLOR.BLACK)
-        this.cell(7, 7).setChessman(Rook, COLOR.BLACK)
+        this.cell(0, 0).setChessman(Rook, COLOR.BLACK)
+        this.cell(7, 0).setChessman(Rook, COLOR.BLACK)
+        this.cell(0, 7).setChessman(Rook, COLOR.WHITE)
+        this.cell(7, 7).setChessman(Rook, COLOR.WHITE)
 
-        this.cell(1, 0).setChessman(Knight, COLOR.WHITE)
-        this.cell(6, 0).setChessman(Knight, COLOR.WHITE)
-        this.cell(1, 7).setChessman(Knight, COLOR.BLACK)
-        this.cell(6, 7).setChessman(Knight, COLOR.BLACK)
+        this.cell(1, 0).setChessman(Knight, COLOR.BLACK)
+        this.cell(6, 0).setChessman(Knight, COLOR.BLACK)
+        this.cell(1, 7).setChessman(Knight, COLOR.WHITE)
+        this.cell(6, 7).setChessman(Knight, COLOR.WHITE)
 
-        this.cell(2, 0).setChessman(Bishop, COLOR.WHITE)
-        this.cell(5, 0).setChessman(Bishop, COLOR.WHITE)
-        this.cell(2, 7).setChessman(Bishop, COLOR.BLACK)
-        this.cell(5, 7).setChessman(Bishop, COLOR.BLACK)
+        this.cell(2, 0).setChessman(Bishop, COLOR.BLACK)
+        this.cell(5, 0).setChessman(Bishop, COLOR.BLACK)
+        this.cell(2, 7).setChessman(Bishop, COLOR.WHITE)
+        this.cell(5, 7).setChessman(Bishop, COLOR.WHITE)
 
-        this.cell(3, 0).setChessman(Queen, COLOR.WHITE)
-        this.cell(4, 0).setChessman(King, COLOR.WHITE)
-        this.cell(3, 7).setChessman(Queen, COLOR.BLACK)
-        this.cell(4, 7).setChessman(King, COLOR.BLACK)
+        this.cell(3, 0).setChessman(Queen, COLOR.BLACK)
+        this.cell(4, 0).setChessman(King, COLOR.BLACK)
+        this.cell(3, 7).setChessman(Queen, COLOR.WHITE)
+        this.cell(4, 7).setChessman(King, COLOR.WHITE)
 
     }
 }

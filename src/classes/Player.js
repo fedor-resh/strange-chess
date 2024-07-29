@@ -1,23 +1,23 @@
 import {allChessmen} from "./Chessmen.js";
 import {Cell} from "./Cell.js";
-
-const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+import {COLOR} from "../consts.js";
 
 export class Player {
-    constructor(color) {
+    constructor(color, hash = '0'.repeat(8)) {
         this.color = color;
         this.stock = [];
         this.coins = 0;
+        this.hash = hash;
         this.initStock();
     }
 
     initStock() {
         for (let i = 0; i < 8; i++) {
-            this.stock.push(new Cell(-1, i, null));
+            this.stock.push(new Cell(i, this.color === COLOR.WHITE ? 9 : 10, null));
         }
 
-        this.stock.forEach((cell) => {
-            cell.setChessman(allChessmen[randomInt(0, allChessmen.length - 1)], this.color);
+        this.stock.forEach((cell, i) => {
+            cell.setChessman(allChessmen[Number.parseInt(this.hash[i], 36) % allChessmen.length], this.color);
             cell.isFromStock = true;
         })
     }

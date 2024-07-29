@@ -10,6 +10,25 @@ const Cells = ({row, cellProps, withPrice}) => (
     <>{row.map((cell, j) => <Cell {...cellProps(cell)} key={j} withPrice={withPrice}/>)}</>
 )
 
+const getRandomHash = () => {
+    const hash = () => Math.random().toString(36).substring(Math.random().toString(36).length - 8)
+    return hash() + hash()
+}
+
+function handleRoomState() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const roomId = urlParams.get('room');
+    if (roomId) {
+        firebase.connect(roomId)
+    } else {
+        const roomId = getRandomHash()
+        firebase.connect(roomId)
+        window.location.search = `?room=${roomId}`
+    }
+    return roomId
+}
+
+
 function App() {
     const [game, setGame] = useState(new Game());
     const {board} = game;
@@ -17,38 +36,20 @@ function App() {
         setGame(game.copyGame());
     }
     useEffect(() => {
-        board.initBoard();
-        render();
-        console.log('move')
-        const urlParams = new URLSearchParams(window.location.search);
-        const roomId = urlParams.get('room');
-        if (roomId) {
-            firebase.connect(roomId)
-        } else {
-            const roomId = Math.random().toString(36).substring(7);
-            firebase.connect(roomId)
-            window.location.search = `?room=${roomId}`
-        }
-        firebase.listen('history', history => {
-            game.history = history || []
-            game.history.forEach(move => makeMoveFromObj(game, move))
-            render()
+        const hash = handleRoomState();
+        setGame(new Game([], hash));
+        firebase.listen('history', (history) => {
+            setGame(new Game(history || [], hash));
         })
     }, []);
 
-    const cellProps = useCallback((cell) => ({
-        game,
-        cell,
-        render
-    }), [game, render])
-
-
+    const cellProps = useCallback((cell) => ({game, cell, render}), [game, render])
 
     return (
         <div className='game'>
             <div className='game_data'>
-                <h1>White coins: {game.players[COLOR.WHITE].coins.toString()}</h1>
-                <h1>Black coins: {game.players[COLOR.BLACK].coins.toString()}</h1>
+                <h1>White coins: {game.players[COLOR.WHITE].coins}</h1>
+                <h1>Black coins: {game.players[COLOR.BLACK].coins}</h1>
             </div>
             <div className='total_board'>
                 <div className='whiteColorBar'>
@@ -59,7 +60,7 @@ function App() {
                 </div>
                 <div className='board'>
                     {board.matrix.map((row, i) =>
-                        <Fragment key={i}>
+                        !row[0].isFromStock && <Fragment key={i}>
                             <Cells row={row} cellProps={cellProps}/>
                         </Fragment>
                     )}

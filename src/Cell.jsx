@@ -13,7 +13,6 @@ export function Cell({game, cell, render, withPrice}) {
 
     return <div className='hover_detector'>
         <div
-            onClick={() => console.log({cell})}
             style={{
                 backgroundColor: (cell.x + cell.y) % 2 ? colors.darkGray : colors.lightGray,
                 color: notDisabled? cell.chessman?.color : colors.darkGray
@@ -38,10 +37,12 @@ export function Cell({game, cell, render, withPrice}) {
             }}
 
             onDrop={() => {
-                game.putChessman(cell);
+                const move = game.putChessman(cell);
+                render()
+                game.addToHistory(move)
+                console.log(move)
                 firebase.set('history', game.history)
-                render();
-            }}
+                }}
             onDragOver={(e) => e.preventDefault()}
         >
             <div
